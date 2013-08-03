@@ -1,0 +1,55 @@
+body
+{
+    background: #595959;
+}
+
+#web-audio-api-board-demo-content-wrapper
+{
+    width: 50%;
+    min-width: 700px;
+    margin: auto;
+    vertical-align: top;
+}
+
+#web-audio-api-board-demo-control-bin, #web-audio-api-board-demo-board
+{
+    min-height: 35px;
+    min-width: 35px;
+    display: inline-block;
+    margin: 0.5em;
+    vertical-align: top;
+}
+
+#web-audio-api-board-demo-control-bin
+{
+    margin-right: 2em;
+}
+
+#board-table
+{
+    width: 600px;
+    height: 300px;
+}
+
+#board-table .table-cell, #web-audio-api-board-demo-control-bin, .control-bin-item
+{
+    border: 1px solid #d3d3d3;
+}
+
+.control-bin-item
+{
+    height: 32px;
+    width: 32px;
+    margin: 0.5em;
+}
+
+#control-bin-item-sin-wav{
+    background-image: url('images/sin-icon.gif');
+}
+
+#control-bin-item-speaker-out
+{
+    background-image: url('images/speaker-icon.gif');
+}
+
+

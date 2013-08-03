@@ -1,0 +1,15 @@
+.table {
+    display: table;
+}
+
+.table-row {
+    display: table-row;
+}
+
+.table-cell {
+    display: table-cell;
+}
+
+.table-caption {
+    display: table-caption;
+}
