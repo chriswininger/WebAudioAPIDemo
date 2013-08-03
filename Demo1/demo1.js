@@ -1,5 +1,5 @@
 (function(){
-    var context, mainVol;
+    var context, mainVol, idInc = 0, audioControls = [];
 
     // Document Load
     $(function(){
@@ -18,6 +18,28 @@
 
     function initUI(){
         $('.horizontal-slider').slider();
+        $('.control-bin-item').draggable({
+            helper: 'clone'
+        });
+        $('.table-cell', '#web-audio-api-board-demo-board').droppable({
+            'drop': function(event, ui){
+                //this.css({'background-image': "url('images/sin-icon.gif')"})
+                var targetElem = $(this).attr("id");
+                $(ui.draggable).clone().appendTo(this);
+                switch (ui.draggable[0].id) {
+                    case 'control-bin-item-sin-wav':
+                        var ctrl = new OscillatorControl(idInc++);
+                        audioControls.push(ctrl);
+                        $('#web-audio-api-board-demo-control-ui').append(
+                            $('<div>').addClass('web-audio-api-board-demo-control-ui-row').append(
+                                $('<h4>').text('Sine Wave Control')
+                            ).append($('<div>').innerHTML(ctr.render()))
+                        );
+
+                        break;
+                }
+            }
+        });
     }
 
 })();

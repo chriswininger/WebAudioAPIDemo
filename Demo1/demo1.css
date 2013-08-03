@@ -25,10 +25,15 @@ body
     margin-right: 2em;
 }
 
+.web-audio-api-board-demo-control-ui-row
+{
+
+}
+
 #board-table
 {
-    width: 600px;
-    height: 300px;
+    min-width: 100px;
+    min-height: 100px;
 }
 
 #board-table .table-cell, #web-audio-api-board-demo-control-bin, .control-bin-item
@@ -36,6 +41,10 @@ body
     border: 1px solid #d3d3d3;
 }
 
+#board-table .table-cell{
+    height: 50px;
+    width: 50px;
+}
 .control-bin-item
 {
     height: 32px;
