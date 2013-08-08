@@ -1,32 +1,51 @@
+// objectMappings will map ui elements by name to controls
 (function(){
-    var _OscillatorControl = function(id) {
+    var _OscillatorControl;
+    _OscillatorControl = function (id, index, objectMappings) {
+        var _self = this;
+
         this.id = id;
+        this.index = index;
+
+        this.render = function () {
+            for (var i = 0, out = '', ctrl = null; i < this.uiControls.length; i++) {
+                ctrl = this.uiControls[i];
+                out += ctrl.html
+                    .replace(/(\{name\})/g, ctrl.name)
+                    .replace(/(\{index\})/g, this.index)
+                    .replace(/(\{id\})/g, this.id);
+            }
+
+            return '<div id = "' + _self.id + '">' + out + '</div>';
+        };
+
+        this.updateOscilator = function () {
+            var div = $('#' + _self.id),
+                pitch = $('[data-name=ui-wave-pitch-selector]', div);
+            var str= '';
+        }
     };
 
+
     _OscillatorControl.prototype = {
-        'constructor': _OscillatorControl(),
-        'id': '0',
+        'constructor': _OscillatorControl,
         'waveType': 'sine',
         'uiControls':[{
             'name': 'ui-wave-type-selector',
-            'html': '<input name="' + id + this.name  + '" type="radio" value="sine" checked /> Sine ' +
-                    '<input name="' + id + this.name  + '" type="radio" value="square" /> Square ' +
-                    '<input name="' + id + this.name  + '" type="radio" value="sawtooth" /> Saw Tooth'
+            'html': '<div>' +
+                    '<input data-name="{name}" data-index="{index}" name="{id}-{name}" type="radio" value="sine" checked /> Sine ' +
+                    '<input data-name="{name}" data-index="{index}" name="{id}-{name}" type="radio" value="square" /> Square ' +
+                    '<input data-name="{name}" data-index="{index}" name="{id}-{name}" type="radio" value="sawtooth" /> Saw Tooth' +
+                    '</div>' +
+                    '<br />'
         },{
             'name': 'ui-wave-pitch-selector',
-            'html': '<div class="horizontal-slider"></div>'
+            'html': '<div><div data-name="{name}" data-index="{index}" class="horizontal-slider"></div></div><br />'
         },
         {
             'name': 'ui-wave-volume-selector',
-            'html': '<div class="horizontal-slider"></div>'
-        }],
-        'render': function() {
-            for (var i = 0, out = ''; i < uiControls.length; i++) {
-                out += uiControls[i].html;
-            }
-
-            return out;
-        }
+            'html': '<div><div data-name="{name}" data-index="{index}" class="horizontal-slider"></div></div>'
+        }]
     };
 
     // Create global hooks

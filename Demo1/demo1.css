@@ -27,7 +27,9 @@ body
 
 .web-audio-api-board-demo-control-ui-row
 {
-
+    margin: 0.5em;
+    padding: 1em;
+    padding-top: 0em;
 }
 
 #board-table
@@ -36,7 +38,7 @@ body
     min-height: 100px;
 }
 
-#board-table .table-cell, #web-audio-api-board-demo-control-bin, .control-bin-item
+#board-table .table-cell, #web-audio-api-board-demo-control-bin, .control-bin-item, .web-audio-api-board-demo-control-ui-row
 {
     border: 1px solid #d3d3d3;
 }

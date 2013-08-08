@@ -21,6 +21,7 @@
         $('.control-bin-item').draggable({
             helper: 'clone'
         });
+
         $('.table-cell', '#web-audio-api-board-demo-board').droppable({
             'drop': function(event, ui){
                 //this.css({'background-image': "url('images/sin-icon.gif')"})
@@ -28,13 +29,30 @@
                 $(ui.draggable).clone().appendTo(this);
                 switch (ui.draggable[0].id) {
                     case 'control-bin-item-sin-wav':
-                        var ctrl = new OscillatorControl(idInc++);
+                        var ctrl = new OscillatorControl('oscCtrl' + idInc, idInc++);
+
                         audioControls.push(ctrl);
+
+                        var newUICtrl = $('<div>').addClass('web-audio-api-board-demo-control-ui-row').append(
+                            $('<h4>').text('Sine Wave Control')
+                        ).append($('<div>').html(ctrl.render()));
+
                         $('#web-audio-api-board-demo-control-ui').append(
-                            $('<div>').addClass('web-audio-api-board-demo-control-ui-row').append(
-                                $('<h4>').text('Sine Wave Control')
-                            ).append($('<div>').innerHTML(ctr.render()))
+                            newUICtrl
                         );
+
+                        $('.horizontal-slider', newUICtrl).slider({
+                            'min': 0,
+                            'max': 100,
+                            'change': function(event) {
+                                ctrl.updateOscilator();
+                                /*var $ctrl = $(this),
+                                    index = $ctrl.attr('data-index'),
+                                    osc = audioControls[index];*/
+
+                            }
+
+                        });
 
                         break;
                 }
