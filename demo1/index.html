@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns = "http://www.w3.org/1999/html">
+<head>
+    <title>Demo Basic Oscillator</title>
+
+    <link href="../lib/jquery-ui/jquery-ui-1.10.3.custom.min.css" type="text/css" rel="stylesheet">
+
+    <script src = "../lib/jquery-1.9.1.js" type = "text/javascript"></script>
+    <script src= "../lib/jquery-ui/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
+    <script src="../lib/knockout-2.3.0.js"></script>
+
+    <script src= "../lib/jPhong.js" type="text/javascript"></script>
+
+    <link href="../global.css" type="text/css" rel="stylesheet">
+
+    <script type = "text/javascript">
+        (function(){
+            var context = null, mainVol = null, oscillator = null, model = null;
+
+            $(function(){
+                model = new oscillatorViewModel();
+                ko.applyBindings(model);
+
+
+                initAudio();
+
+                $('#btnStart').click(function(event){
+                    // start the sound
+                    oscillator = context.createOscillator();
+                    oscillator.type= OscillatorType.sine;
+                    oscillator.connect(mainVol);
+                    oscillator.start(0);
+                });
+
+                $('#btnStop').click(function(event){
+                    oscillator.stop(0);
+                    oscillator.disconnect();
+                });
+            });
+
+
+            function initAudio(){
+                // get the audio context
+                context = new webkitAudioContext(),
+                // create a gain node to control the volume
+                mainVol = context.createGainNode();
+                mainVol.gain.value = 0.5;
+                // connect to output
+                mainVol.connect(context.destination);
+            }
+
+
+            // Knockout view model
+            var oscillatorViewModel = function() {
+              var _self = this;
+             _self.availableWaveTypes = ko.observableArray([
+                 {'waveTypeText': 'Sine', 'waveTypeValue': 0},
+                 {'waveTypeText': 'Square', 'waveTypeValue': 1},
+                 {'waveTypeText': 'Saw Tooth', 'waveTypeValue': 2},
+                 {'waveTypeText': 'Triangle', 'waveTypeValue': 3}
+             ]);
+
+              _self.selectedWaveType = ko.observable(_self.availableWaveTypes()[0]);
+
+              _self.value_changed = function(data) {
+                oscillator.type = data.selectedWaveType().waveTypeValue;
+                //alert('change: ' +  data.selectedWaveType().waveTypeText);
+              };
+            };
+
+
+
+        })();
+    </script>
+</head>
+<body>
+    <h3>Basic Oscillator Demo</h3>
+    <div>
+
+        <strong></strong><label for="drpType">Wave Type: </label></strong>
+            <select id="drpType" data-bind="options: availableWaveTypes, optionsText: 'waveTypeText', value: selectedWaveType, optionsCaption: 'Choose...', event: { change: value_changed }">
+            </select>
+        </div>
+
+    <div>
+        <button id="btnStart">Play Tone</button>
+        <button id="btnStop">Stop Tone</button>
+    </div>
+</body>
+</html>
