@@ -61,11 +61,17 @@
              ]);
 
               _self.selectedWaveType = ko.observable(_self.availableWaveTypes()[0]);
+              _self.wavePitch = ko.observable();
 
               _self.value_changed = function(data) {
                 oscillator.type = data.selectedWaveType().waveTypeValue;
                 //alert('change: ' +  data.selectedWaveType().waveTypeText);
               };
+
+              _self.pitchChanged = function(data){
+                  oscillator.frequency.value = data.wavePitch();
+              }
+
             };
 
 
@@ -80,6 +86,7 @@
         <strong></strong><label for="drpType">Wave Type: </label></strong>
             <select id="drpType" data-bind="options: availableWaveTypes, optionsText: 'waveTypeText', value: selectedWaveType, optionsCaption: 'Choose...', event: { change: value_changed }">
             </select>
+            <input id="txtPitch" type="number" data-bind=" event: { change: pitchChanged }, value: wavePitch" />
         </div>
 
     <div>

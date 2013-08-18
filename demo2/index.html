@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns = "http://www.w3.org/1999/html">
+<head>
+    <title>Demo Basic Oscillator</title>
+
+    <link href="../lib/jquery-ui/jquery-ui-1.10.3.custom.min.css" type="text/css" rel="stylesheet">
+
+    <script src = "../lib/jquery-1.9.1.js" type = "text/javascript"></script>
+    <script src= "../lib/jquery-ui/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
+    <script src="../lib/knockout-2.3.0.js"></script>
+
+    <script src= "../lib/jPhong.js" type="text/javascript"></script>
+
+    <link href="../global.css" type="text/css" rel="stylesheet">
+
+    <script type = "text/javascript">
+        (function(){
+            var context = null, mainVol = null, clipBuffer = null, model = null, source = null;
+
+            $(function(){
+                model = new clipViewModel();
+                ko.applyBindings(model);
+
+                initAudio();
+                initSoundClip();
+            });
+
+
+            function initAudio(){
+                // get the audio context
+                context = new webkitAudioContext(),
+                // create a gain node to control the volume
+                mainVol = context.createGainNode();
+                mainVol.gain.value = 0.5;
+                // connect to output
+                mainVol.connect(context.destination);
+            }
+
+            function initSoundClip() {
+                var request = new XMLHttpRequest();
+                request.open('GET', 'test.mp3', true);
+                request.responseType = 'arraybuffer';
+
+                request.onload = function() {
+                    context.decodeAudioData(request.response, function(buffer){
+                        clipBuffer = buffer;
+
+                        $('#btnStart').removeAttr('disabled');
+
+                    }, onError);
+                };
+
+                request.send();
+            }
+
+            function playSoundClip(buffer) {
+                source = context.createBufferSource();
+                source.buffer = buffer;
+                source.connect(mainVol);
+                source.start(0);
+            }
+
+            function stopSoundClip(){
+                source.stop(0);
+                source.disconnect();
+            }
+
+            function onError(e) {
+                alert('Error: ');
+            }
+
+            // Knockout view model
+            var clipViewModel = function() {
+                var _self = this;
+
+                _self.mainVolume = ko.observable(0.5);
+
+                _self.playClip = function(){
+                    playSoundClip(clipBuffer);
+                    $('#btnStop').removeAttr('disabled');
+                };
+
+                _self.stopClip = function(){
+                    stopSoundClip();
+                };
+
+                _self.volumeChanged = function(data) {
+                    mainVol.gain.value= _self.mainVolume();
+                }
+            };
+
+
+
+        })();
+    </script>
+</head>
+<body>
+    <h3>Basic Sound Clip</h3>
+    <div>
+        <label for="txtMainVol">Volume: </label>
+        <input id="txtMainVol" type="number" min="0" max="1" step="0.1" data-bind="value: mainVolume, event: {change: volumeChanged}" />
+    </div>
+
+    <div>
+        <button id="btnStart" disabled data-bind="click: playClip">Play Tone</button>
+        <button id="btnStop" disabled  data-bind="click: stopClip">Stop Tone</button>
+    </div>
+</body>
+</html>
