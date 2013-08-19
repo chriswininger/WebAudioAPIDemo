@@ -57,6 +57,7 @@
                 source = context.createBufferSource();
                 source.buffer = buffer;
                 source.connect(mainVol);
+                source.playbackRate.value = 2;
                 source.start(0);
             }
 
@@ -74,6 +75,7 @@
                 var _self = this;
 
                 _self.mainVolume = ko.observable(0.5);
+                _self.playbackRate = ko.observable(1);
 
                 _self.playClip = function(){
                     playSoundClip(clipBuffer);
@@ -86,7 +88,11 @@
 
                 _self.volumeChanged = function(data) {
                     mainVol.gain.value= _self.mainVolume();
-                }
+                };
+
+                _self.playbackRateChanged = function(data){
+                  source.playbackRate.value = _self.playbackRate();
+                };
             };
 
 
@@ -99,6 +105,11 @@
     <div>
         <label for="txtMainVol">Volume: </label>
         <input id="txtMainVol" type="number" min="0" max="1" step="0.1" data-bind="value: mainVolume, event: {change: volumeChanged}" />
+    </div>
+
+    <div>
+        <label for="txtPlayBackSpeed">Volume: </label>
+        <input id="txtPlayBackSpeed" type="number" min="0" max="1024" step="0.5" data-bind="value: playbackRate, event: {change: playbackRateChanged}" />
     </div>
 
     <div>
