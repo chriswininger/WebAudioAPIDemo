@@ -31,6 +31,11 @@
                     case 'control-bin-item-sin-wav':
                         var ctrl = new OscillatorControl('oscCtrl' + idInc, idInc++);
 
+                        ctrl.oscillator = context.createOscillator();
+                        ctrl.oscillator.type= OscillatorType.sine;
+                        ctrl.oscillator.connect(mainVol);
+
+
                         audioControls.push(ctrl);
 
                         var newUICtrl = $('<div>').addClass('web-audio-api-board-demo-control-ui-row').append(
@@ -39,7 +44,8 @@
 
 
                         $('[data-name=ui-wave-start]', newUICtrl).bind('click', function(e){
-                            alert('here');
+                            ctrl.oscillator.start(0);
+                            //alert('here');
                         });
 
                         $('#web-audio-api-board-demo-control-ui').append(
