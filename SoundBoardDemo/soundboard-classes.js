@@ -48,9 +48,15 @@
         },
         {
             'name': 'ui-wave-start',
-            'html': '<div><button data-name="{name}" data-index="{index}" name="{id}-{name}">State Tone</button></div>'
+            'html': '<div><button data-name="{name}" data-index="{index}" name="{id}-{name}">Start Tone</button></div>'
 
-        }]
+        },
+        {
+            'name': 'ui-wave-stop',
+            'html': '<div><button data-name="{name}" data-index="{index}" name="{id}-{name}">Stop Tone</button></div>'
+
+        }
+        ]
     };
 
     // Create global hooks

@@ -48,6 +48,13 @@
                             //alert('here');
                         });
 
+                        $('[data-name=ui-wave-stop]', newUICtrl).bind('click', function(e){
+                            ctrl.oscillator.stop(0);
+                            //alert('here');
+                        });
+
+
+
                         $('#web-audio-api-board-demo-control-ui').append(
                             newUICtrl
                         );
@@ -57,9 +64,10 @@
 
                         $('.horizontal-slider', newUICtrl).slider({
                             'min': 0,
-                            'max': 100,
+                            'max': 20000,
                             'change': function(event) {
-                                ctrl.updateOscilator();
+                                ctrl.oscillator.frequency.value = $(this).slider("value");
+                                //ctrl.updateOscilator();
                                 /*var $ctrl = $(this),
                                     index = $ctrl.attr('data-index'),
                                     osc = audioControls[index];*/
