@@ -45,6 +45,11 @@
         {
             'name': 'ui-wave-volume-selector',
             'html': '<div><div data-name="{name}" data-index="{index}" class="horizontal-slider"></div></div>'
+        },
+        {
+            'name': 'ui-wave-start',
+            'html': '<div><button data-name="{name}" data-index="{index}" name="{id}-{name}">State Tone</button></div>'
+
         }]
     };
 

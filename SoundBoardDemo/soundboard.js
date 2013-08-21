@@ -37,9 +37,17 @@
                             $('<h4>').text('Sine Wave Control')
                         ).append($('<div>').html(ctrl.render()));
 
+
+                        $('[data-name=ui-wave-start]', newUICtrl).bind('click', function(e){
+                            alert('here');
+                        });
+
                         $('#web-audio-api-board-demo-control-ui').append(
                             newUICtrl
                         );
+
+
+
 
                         $('.horizontal-slider', newUICtrl).slider({
                             'min': 0,

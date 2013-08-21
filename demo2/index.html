@@ -13,92 +13,7 @@
 
     <link href="../global.css" type="text/css" rel="stylesheet">
 
-    <script type = "text/javascript">
-        (function(){
-            var context = null, mainVol = null, clipBuffer = null, model = null, source = null;
-
-            $(function(){
-                model = new clipViewModel();
-                ko.applyBindings(model);
-
-                initAudio();
-                initSoundClip();
-            });
-
-
-            function initAudio(){
-                // get the audio context
-                context = new webkitAudioContext(),
-                // create a gain node to control the volume
-                mainVol = context.createGainNode();
-                mainVol.gain.value = 0.5;
-                // connect to output
-                mainVol.connect(context.destination);
-            }
-
-            function initSoundClip() {
-                var request = new XMLHttpRequest();
-                request.open('GET', 'test.mp3', true);
-                request.responseType = 'arraybuffer';
-
-                request.onload = function() {
-                    context.decodeAudioData(request.response, function(buffer){
-                        clipBuffer = buffer;
-
-                        $('#btnStart').removeAttr('disabled');
-
-                    }, onError);
-                };
-
-                request.send();
-            }
-
-            function playSoundClip(buffer) {
-                source = context.createBufferSource();
-                source.buffer = buffer;
-                source.connect(mainVol);
-                source.playbackRate.value = 2;
-                source.start(0);
-            }
-
-            function stopSoundClip(){
-                source.stop(0);
-                source.disconnect();
-            }
-
-            function onError(e) {
-                alert('Error: ');
-            }
-
-            // Knockout view model
-            var clipViewModel = function() {
-                var _self = this;
-
-                _self.mainVolume = ko.observable(0.5);
-                _self.playbackRate = ko.observable(1);
-
-                _self.playClip = function(){
-                    playSoundClip(clipBuffer);
-                    $('#btnStop').removeAttr('disabled');
-                };
-
-                _self.stopClip = function(){
-                    stopSoundClip();
-                };
-
-                _self.volumeChanged = function(data) {
-                    mainVol.gain.value= _self.mainVolume();
-                };
-
-                _self.playbackRateChanged = function(data){
-                  source.playbackRate.value = _self.playbackRate();
-                };
-            };
-
-
-
-        })();
-    </script>
+    <script src="demo2.js" type = "text/javascript"></script>
 </head>
 <body>
     <h3>Basic Sound Clip</h3>
@@ -108,8 +23,13 @@
     </div>
 
     <div>
+        <label for="fileSample">Sample: </label>
+        <input id="fileSample" type="file" />
+    </div>
+
+    <div>
         <label for="txtPlayBackSpeed">Volume: </label>
-        <input id="txtPlayBackSpeed" type="number" min="0" max="1024" step="0.5" data-bind="value: playbackRate, event: {change: playbackRateChanged}" />
+        <input id="txtPlayBackSpeed" type="number" min="0" max="1024" step="0.2" data-bind="value: playbackRate, event: {change: playbackRateChanged}" />
     </div>
 
     <div>
