@@ -1,6 +1,8 @@
 // objectMappings will map ui elements by name to controls
 (function(){
+    /* ---- Oscillator Control ---- */
     var _OscillatorControl;
+
     _OscillatorControl = function (id, index, objectMappings) {
         var _self = this;
 
@@ -18,12 +20,6 @@
 
             return '<div id = "' + _self.id + '">' + out + '</div>';
         };
-
-        this.updateOscilator = function () {
-            var div = $('#' + _self.id),
-                pitch = $('[data-name=ui-wave-pitch-selector]', div);
-            var str= '';
-        }
     };
 
 
@@ -59,7 +55,43 @@
         ]
     };
 
-    // Create global hooks
+    /* ---- In Line Volume Control ---- */
+    var _InLineVolumeControl;
+
+    _InLineVolumeControl = function (id, index, objectMappings) {
+        var _self = this;
+
+        this.id = id;
+        this.index = index;
+
+        this.render = function () {
+            for (var i = 0, out = '', ctrl = null; i < this.uiControls.length; i++) {
+                ctrl = this.uiControls[i];
+                out += ctrl.html
+                    .replace(/(\{name\})/g, ctrl.name)
+                    .replace(/(\{index\})/g, this.index)
+                    .replace(/(\{id\})/g, this.id);
+            }
+
+            return '<div id = "' + _self.id + '">' + out + '</div>';
+        };
+    };
+
+    _InLineVolumeControl.prototype = {
+        'constructor': _InLineVolumeControl,
+        'waveType': 'sine',
+        'uiControls':[{
+            'name': 'ui-volume-slider',
+            'html': '<div>' +
+                        '<div data-name="{name}" data-index="{index}"  id="{id}-{name}" class="horizontal-slider">' +
+                    '</div>' +
+                    '<br />'
+        }]
+    };
+
+
+    // --- Create global hooks ---
     this.OscillatorControl = _OscillatorControl;
+    this.InLineVolumeControl = _InLineVolumeControl;
 
 })();
