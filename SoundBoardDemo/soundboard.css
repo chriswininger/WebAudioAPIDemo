@@ -69,3 +69,8 @@ body
 {
     background-image: url('images/boombox-icon.gif');
 }
+
+#control-bin-item-delay
+{
+    background-image: url('images/delay-icon.gif');
+}

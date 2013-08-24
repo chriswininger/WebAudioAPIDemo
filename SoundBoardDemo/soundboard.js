@@ -1,5 +1,6 @@
 (function(){
     var context, mainVol, idInc = 0,
+        sampleBuffer,
         audioControls = [],
         audioControlsByLine = [
             [],
@@ -49,6 +50,9 @@
                     case 'control-bin-item-sample':
                         createSampleControl($(this).data('col'), $(this).data('row'));
                         break;
+                    case 'control-bin-item-delay':
+                        createDelayControl($(this).data('col'), $(this).data('row'));
+                        break;
                 }
             }
         });
@@ -72,7 +76,7 @@
         var prevCtrl = null;
         for (var i = 0; i < audioControlsByLine[colNumber].length; i++) {
             if (audioControlsByLine[colNumber][i]) {
-                if (prevCtrl !== null) {
+                if (prevCtrl !== null && typeof prevCtrl.audiocontrol !== 'undefined') {
                     prevCtrl.audiocontrol.disconnect();
                     prevCtrl.audiocontrol.connect(audioControlsByLine[colNumber][i].audiocontrol);
                 }
@@ -86,6 +90,26 @@
             }
         }
     }
+
+    // Create a delay control
+    function createDelayControl(colNumber, rowNumber) {
+        var ctrl = new DelayControl('delayCtrl' + idInc, idInc++);
+
+        ctrl.audiocontrol = context.createDelay(2.0);
+
+        audioControls.push(ctrl);
+        audioControlsByLine[colNumber][rowNumber] = ctrl;
+
+        connectInLine(colNumber);
+
+        addCtrlToUI(ctrl, colNumber, function(newUICtrl){
+            $('[data-name=ui-delay-time]', newUICtrl).bind('change', function(e){
+                ctrl.audiocontrol.delayTime.value = $(this).val();
+            });
+        });
+    }
+
+    // Create an inline volume control
     function createInLineVolume(colNumber, rowNumber){
         var ctrl = new InLineVolumeControl('inlineVol' + idInc, idInc++);
 
@@ -161,41 +185,77 @@
     function createSampleControl(colNumber, rowNumber) {
         var ctrl = new SampleControl('sampleCtrl' + idInc, idInc++);
 
-        ctrl.audiocontrol = context.createBufferSource();
 
         // add to control array for reference
         audioControls.push(ctrl);
         audioControlsByLine[colNumber][rowNumber] = ctrl;
 
-        connectInLine(colNumber);
+        //connectInLine(colNumber);
 
         addCtrlToUI(ctrl, colNumber, function(newUICtrl){
             var onError = function(e){
               alert('error loading file');
             };
 
+            var btnStart = $('[data-name=ui-sample-start]', newUICtrl);
+            var btnStop = $('[data-name=ui-sample-stop]', newUICtrl);
+
             // File Selected
             $("[data-name='ui-sample-file-chooser']", newUICtrl).bind('change', function(event) {
                 var file = event.target.files[0];
-
                 var reader = new FileReader();
+
                 reader.onload = (function(loadedFile){
                     return function(e) {
-                        //stopSoundClip();
+                        if (ctrl.audiocontrol){
+                            ctrl.audiocontrol.stop(0);
+                        }
 
                         context.decodeAudioData(e.target.result, function(buffer){
-                            ctrl.audiocontrol.buffer = buffer;
-                            //source.connect(mainVol);
-                            ctrl.audiocontrol.playbackRate.value = 1;
-                            ctrl.audiocontrol.start(0);
-                        }, onError);
+                            sampleBuffer = buffer;
+                            //ctrl.audiocontrol.buffer = buffer;
+                            //ctrl.audiocontrol.playbackRate.value = 1;
 
+                            btnStart.removeAttr('disabled');
+                            btnStop.removeAttr('disabled');
+                        }, onError);
 
                     };
                 })(file);
 
                 // Read the file
                 reader.readAsArrayBuffer(file);
+            });
+
+            // Sample speed
+            $('[data-name=ui-sample-speed-control]', newUICtrl).slider({
+                'min': 0,
+                'max': 100,
+                'step': 0.1,
+                'change': function(e){
+                    if (ctrl.audiocontrol) {
+                        ctrl.audiocontrol.playbackRate.value = $(this).slider('value');
+                    }
+                }});
+
+            // Sample Start
+            btnStart.click(function(event){
+                //if (ctrl.audiocontrol.buffer) {
+                ctrl.audiocontrol = context.createBufferSource();
+
+                audioControlsByLine[colNumber][rowNumber] = ctrl;
+
+                ctrl.audiocontrol.buffer = sampleBuffer;
+                connectInLine(colNumber);
+                ctrl.audiocontrol.start(0);
+                //}
+            });
+
+            // Stop the sample
+            btnStop.click(function(event){
+                if (ctrl.audiocontrol.buffer) {
+                    ctrl.audiocontrol.stop(0);
+                }
             });
         });
     }

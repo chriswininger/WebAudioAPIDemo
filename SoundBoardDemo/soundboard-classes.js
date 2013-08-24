@@ -11,15 +11,7 @@
         this.displayName = 'Oscillator Control';
 
         this.render = function () {
-            for (var i = 0, out = '', ctrl = null; i < this.uiControls.length; i++) {
-                ctrl = this.uiControls[i];
-                out += ctrl.html
-                    .replace(/(\{name\})/g, ctrl.name)
-                    .replace(/(\{index\})/g, this.index)
-                    .replace(/(\{id\})/g, this.id);
-            }
-
-            return '<div id = "' + _self.id + '">' + out + '</div>';
+           return renderHelper(this.uiControls, this.id);
         };
     };
 
@@ -63,15 +55,7 @@
         this.index = index;
         this.displayName = 'Inline Volume Control';
         this.render = function () {
-            for (var i = 0, out = '', ctrl = null; i < this.uiControls.length; i++) {
-                ctrl = this.uiControls[i];
-                out += ctrl.html
-                    .replace(/(\{name\})/g, ctrl.name)
-                    .replace(/(\{index\})/g, this.index)
-                    .replace(/(\{id\})/g, this.id);
-            }
-
-            return '<div id = "' + _self.id + '">' + out + '</div>';
+            return renderHelper(this.uiControls, this.id);
         };
     };
 
@@ -106,9 +90,49 @@
             'name': 'ui-sample-file-chooser',
             'html': '<div>' +
                         '<input type="file" data-name="{name}" data-index="{index}"  id="{id}-{name}" />' +
-                    '</div>'
+                    '</div>' +
+                    '</br>'
+            },
+            {
+                'name': 'ui-sample-speed-control',
+                'html': '<div>' +
+                            '<div data-name="{name}" data-index="{index}" class="horizontal-slider"></div>' +
+                        '</div>'
+            },
+            {
+                'name': 'ui-sample-start',
+                'html': '<br /><div><button data-name="{name}" data-index="{index}" name="{id}-{name}" disabled>Start Sample</button>'
+            },
+            {
+                'name': 'ui-sample-stop',
+                'html': '<button data-name="{name}" data-index="{index}" name="{id}-{name}" disabled>Stop Sample</button></div>'
+            }]
+    };
+
+    /* --- Delay Control --- */
+    var _DelayControl;
+
+    _DelayControl = function (id) {
+        var _self = this;
+
+        this.id = id;
+        this.displayName = 'Delay Control';
+        this.render = function () {
+            return renderHelper(this.uiControls, this.id);
+        };
+    };
+
+    _DelayControl.prototype = {
+        'constructor': _DelayControl,
+        'uiControls':[{
+            'name': 'ui-delay-time',
+            'html': '<div>' +
+                        '<input type="number" min="0" max="2" step="0.05" data-name="{name}" data-index="{index}"  id="{id}-{name}" />' +
+                    '</div>' +
+                    '<br />'
         }]
     };
+
 
     /* --- Shared Functions ---- */
     function renderHelper(uiControls, id) {
@@ -127,5 +151,6 @@
     this.OscillatorControl = _OscillatorControl;
     this.InLineVolumeControl = _InLineVolumeControl;
     this.SampleControl = _SampleControl;
+    this.DelayControl = _DelayControl;
 
 })();
