@@ -47,6 +47,8 @@ body
     height: 50px;
     width: 50px;
 }
+
+/* --- Control Bin --- */
 .control-bin-item
 {
     height: 32px;
@@ -63,4 +65,7 @@ body
     background-image: url('images/speaker-icon.gif');
 }
 
-
+#control-bin-item-sample
+{
+    background-image: url('images/boombox-icon.gif');
+}

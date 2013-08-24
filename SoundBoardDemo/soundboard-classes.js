@@ -8,6 +8,7 @@
 
         this.id = id;
         this.index = index;
+        this.displayName = 'Oscillator Control';
 
         this.render = function () {
             for (var i = 0, out = '', ctrl = null; i < this.uiControls.length; i++) {
@@ -29,9 +30,10 @@
         'uiControls':[{
             'name': 'ui-wave-type-selector',
             'html': '<div>' +
-                    '<input data-name="{name}" data-index="{index}" name="{id}-{name}" type="radio" value="sine" checked /> Sine ' +
-                    '<input data-name="{name}" data-index="{index}" name="{id}-{name}" type="radio" value="square" /> Square ' +
-                    '<input data-name="{name}" data-index="{index}" name="{id}-{name}" type="radio" value="sawtooth" /> Saw Tooth' +
+                    '<input data-name="{name}" data-index="{index}" name="{id}-{name}" type="radio" value="0" checked /> Sine ' +
+                    '<input data-name="{name}" data-index="{index}" name="{id}-{name}" type="radio" value="1" /> Square ' +
+                    '<input data-name="{name}" data-index="{index}" name="{id}-{name}" type="radio" value="2" /> Saw Tooth' +
+                    '<input data-name="{name}" data-index="{index}" name="{id}-{name}" type="radio" value="3" /> Saw Tooth' +
                     '</div>' +
                     '<br />'
         },{
@@ -39,17 +41,13 @@
             'html': '<div><div data-name="{name}" data-index="{index}" class="horizontal-slider"></div></div><br />'
         },
         {
-            'name': 'ui-wave-volume-selector',
-            'html': '<div><div data-name="{name}" data-index="{index}" class="horizontal-slider"></div></div>'
-        },
-        {
             'name': 'ui-wave-start',
-            'html': '<div><button data-name="{name}" data-index="{index}" name="{id}-{name}">Start Tone</button></div>'
+            'html': '<br /><div><button data-name="{name}" data-index="{index}" name="{id}-{name}">Start Tone</button>'
 
         },
         {
             'name': 'ui-wave-stop',
-            'html': '<div><button data-name="{name}" data-index="{index}" name="{id}-{name}">Stop Tone</button></div>'
+            'html': '<button data-name="{name}" data-index="{index}" name="{id}-{name}">Stop Tone</button></div>'
 
         }
         ]
@@ -63,7 +61,7 @@
 
         this.id = id;
         this.index = index;
-
+        this.displayName = 'Inline Volume Control';
         this.render = function () {
             for (var i = 0, out = '', ctrl = null; i < this.uiControls.length; i++) {
                 ctrl = this.uiControls[i];
@@ -90,8 +88,44 @@
     };
 
 
+    /* --- Sample Control ---- */
+    var _SampleControl;
+
+    _SampleControl = function (id) {
+        var _self = this;
+        this.id = id;
+        this.displayName = 'Sample Control';
+        this.render = function() {
+            return renderHelper(this.uiControls, _self.id);
+        }
+    }
+
+    _SampleControl.prototype = {
+        'constructor': _SampleControl,
+        'uiControls':[{
+            'name': 'ui-sample-file-chooser',
+            'html': '<div>' +
+                        '<input type="file" data-name="{name}" data-index="{index}"  id="{id}-{name}" />' +
+                    '</div>'
+        }]
+    };
+
+    /* --- Shared Functions ---- */
+    function renderHelper(uiControls, id) {
+        for (var i = 0, out = '', ctrl = null; i < uiControls.length; i++) {
+            ctrl = uiControls[i];
+            out += ctrl.html
+                .replace(/(\{name\})/g, ctrl.name)
+                .replace(/(\{index\})/g, this.index)
+                .replace(/(\{id\})/g, this.id);
+        }
+
+        return '<div id = "' + id + '">' + out + '</div>';
+    }
+
     // --- Create global hooks ---
     this.OscillatorControl = _OscillatorControl;
     this.InLineVolumeControl = _InLineVolumeControl;
+    this.SampleControl = _SampleControl;
 
 })();
