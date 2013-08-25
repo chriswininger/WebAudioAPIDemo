@@ -74,16 +74,28 @@
 
     function connectInLine(colNumber) {
         var prevCtrl = null;
+        var carryForwardCtrl = null; // Save this until we hit a non-delay control
         for (var i = 0; i < audioControlsByLine[colNumber].length; i++) {
             if (audioControlsByLine[colNumber][i]) {
                 if (prevCtrl !== null && typeof prevCtrl.audiocontrol !== 'undefined') {
                     prevCtrl.audiocontrol.disconnect();
                     prevCtrl.audiocontrol.connect(audioControlsByLine[colNumber][i].audiocontrol);
+
+                    if (carryForwardCtrl === null && audioControlsByLine[colNumber][i].audiocontrol === 'Delay Control') {
+                        carryForwardCtrl = prevCtrl;
+                    } else if (carryForwardCtrl !== null && audioControlsByLine[colNumber][i].audiocontrol !== 'Delay Control') {
+                        carryForwardCtrl.connect(audioControlsByLine[colNumber][i].audiocontrol);
+                        carryForwardCtrl = null;
+                    }
                 }
 
                 if (i == (audioControlsByLine[colNumber].length - 1)) {
                     audioControlsByLine[colNumber][i].audiocontrol.disconnect();
                     audioControlsByLine[colNumber][i].audiocontrol.connect(mainVol);
+
+                    if (carryForwardCtrl !== null) {
+                        carryForwardCtrl.connect(mainVol);
+                    }
                 }
 
                 prevCtrl = audioControlsByLine[colNumber][i];
