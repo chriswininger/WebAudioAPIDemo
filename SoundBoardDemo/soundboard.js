@@ -81,9 +81,9 @@
                     prevCtrl.audiocontrol.disconnect();
                     prevCtrl.audiocontrol.connect(audioControlsByLine[colNumber][i].audiocontrol);
 
-                    if (carryForwardCtrl === null && audioControlsByLine[colNumber][i].audiocontrol === 'Delay Control') {
+                    if (carryForwardCtrl === null && audioControlsByLine[colNumber][i].displayName === 'Delay Control') {
                         carryForwardCtrl = prevCtrl;
-                    } else if (carryForwardCtrl !== null && audioControlsByLine[colNumber][i].audiocontrol !== 'Delay Control') {
+                    } else if (carryForwardCtrl !== null && audioControlsByLine[colNumber][i].displayName !== 'Delay Control') {
                         carryForwardCtrl.connect(audioControlsByLine[colNumber][i].audiocontrol);
                         carryForwardCtrl = null;
                     }
@@ -94,7 +94,7 @@
                     audioControlsByLine[colNumber][i].audiocontrol.connect(mainVol);
 
                     if (carryForwardCtrl !== null) {
-                        carryForwardCtrl.connect(mainVol);
+                        carryForwardCtrl.audiocontrol.connect(mainVol);
                     }
                 }
 
@@ -240,15 +240,11 @@
             });
 
             // Sample speed
-            $('[data-name=ui-sample-speed-control]', newUICtrl).slider({
-                'min': 0,
-                'max': 100,
-                'step': 0.1,
-                'change': function(e){
-                    if (ctrl.audiocontrol) {
-                        ctrl.audiocontrol.playbackRate.value = $(this).slider('value');
-                    }
-                }});
+            $('[data-name=ui-sample-speed-control]', newUICtrl).bind('change', function(e){
+                if (ctrl.audiocontrol) {
+                    ctrl.audiocontrol.playbackRate.value = parseFloat($(this).val());
+                }
+            });
 
             // Sample Start
             btnStart.click(function(event){
@@ -264,7 +260,7 @@
             });
 
             // Stop the sample
-            btnStop.click(function(event){
+            btnStop.click(function (event) {
                 if (ctrl.audiocontrol.buffer) {
                     ctrl.audiocontrol.stop(0);
                 }

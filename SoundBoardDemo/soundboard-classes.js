@@ -96,7 +96,7 @@
             {
                 'name': 'ui-sample-speed-control',
                 'html': '<div>' +
-                            '<div data-name="{name}" data-index="{index}" class="horizontal-slider"></div>' +
+                            '<input type="number" min="0" max="1024" step="0.05" data-name="{name}" data-index="{index}" />' +
                         '</div>'
             },
             {
