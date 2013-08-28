@@ -74,3 +74,8 @@ body
 {
     background-image: url('images/delay-icon.gif');
 }
+
+#control-bin-item-lp
+{
+    background-image: url('images/lowpass-icon.gif');
+}

@@ -127,12 +127,29 @@
         'uiControls':[{
             'name': 'ui-delay-time',
             'html': '<div>' +
-                        '<input type="number" min="0" max="2" step="0.05" data-name="{name}" data-index="{index}"  id="{id}-{name}" />' +
+                        '<label>Delay: </label><input type="number" min="0" max="2" step="0.05" data-name="{name}" data-index="{index}"  id="{id}-{name}" />' +
                     '</div>' +
                     '<br />'
         }]
     };
 
+    var _LowPassFilter = function(id){
+
+    };
+
+    _LowPassFilter.prototype = {
+        'constructor': _DelayControl,
+        'uiControls': [{
+            'name': 'ui-lp-cutoff-freq',
+            'html': '<div>' +
+                        '<label>Cutoff Frequency: </label><input type="number" min="0" max="60000" step="1" data-name="{name}" data-index="{index}"  id="{id}-{name}" /> '
+
+            },
+            {
+                'name': 'ui-lp-q',
+                'html': '<label>Q (resonance in dB): </label><input type="number" min="0" max="2" step="12" data-name="{name}" data-index="{index}"  id="{id}-{name}" /></div>'
+            }]
+    };
 
     /* --- Shared Functions ---- */
     function renderHelper(uiControls, id) {
@@ -152,5 +169,6 @@
     this.InLineVolumeControl = _InLineVolumeControl;
     this.SampleControl = _SampleControl;
     this.DelayControl = _DelayControl;
+    this.LowPassFilter = _LowPassFilter;
 
 })();

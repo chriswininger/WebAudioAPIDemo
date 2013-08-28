@@ -1,3 +1,8 @@
+/*
+ * Author: Chris Wininger
+ * Resources: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+ *
+ */
 (function(){
     var context, mainVol, idInc = 0,
         sampleBuffer,
@@ -52,6 +57,9 @@
                         break;
                     case 'control-bin-item-delay':
                         createDelayControl($(this).data('col'), $(this).data('row'));
+                        break;
+                    case 'control-bin-item-lp':
+                        createLowPassControl($(this).data('col'), $(this).data('row'));
                         break;
                 }
             }
@@ -119,6 +127,15 @@
                 ctrl.audiocontrol.delayTime.value = $(this).val();
             });
         });
+    }
+
+    function createLowPassControl(colNumber, rowNumber) {
+        var ctrl = new LowPassFilter('lpCtrl' + idInc, idInc++);
+
+        ctrl.audiocontrol = context.createBiquadFilter();
+        ctrl.audiocontrol.type.value  = 0;
+        ctrl.audiocontrol.frequency.value = 0;
+        ctrl.audiocontrol.Q.value = 0;
     }
 
     // Create an inline volume control
