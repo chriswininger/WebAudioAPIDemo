@@ -1,6 +1,6 @@
 /*
  * Author: Chris Wininger
- * Resources: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+ * Resources: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html, http://noisehack.com/generate-noise-web-audio-api/
  *
  */
 (function(){
@@ -61,6 +61,9 @@
                     case 'control-bin-item-lp':
                         createLowPassControl($(this).data('col'), $(this).data('row'));
                         break;
+                    case 'white-bin-item-white-noise':
+                        createWhiteNoiseControl($(this).data('col'), $(this).data('row'));
+                        break;
                 }
             }
         });
@@ -92,14 +95,17 @@
                     if (carryForwardCtrl === null && audioControlsByLine[colNumber][i].displayName === 'Delay Control') {
                         carryForwardCtrl = prevCtrl;
                     } else if (carryForwardCtrl !== null && audioControlsByLine[colNumber][i].displayName !== 'Delay Control') {
-                        carryForwardCtrl.connect(audioControlsByLine[colNumber][i].audiocontrol);
+                        carryForwardCtrl.audiocontrol.connect(audioControlsByLine[colNumber][i].audiocontrol);
                         carryForwardCtrl = null;
                     }
                 }
 
                 if (i == (audioControlsByLine[colNumber].length - 1)) {
-                    audioControlsByLine[colNumber][i].audiocontrol.disconnect();
-                    audioControlsByLine[colNumber][i].audiocontrol.connect(mainVol);
+
+                    if (typeof audioControlsByLine[colNumber][i].audiocontrol !== 'undefined'){
+                        audioControlsByLine[colNumber][i].audiocontrol.disconnect();
+                        audioControlsByLine[colNumber][i].audiocontrol.connect(mainVol);
+                    }
 
                     if (carryForwardCtrl !== null) {
                         carryForwardCtrl.audiocontrol.connect(mainVol);
@@ -129,6 +135,43 @@
         });
     }
 
+    function createWhiteNoiseControl(colNumber, rowNumber) {
+        var ctrl = new WhiteNoiseControl('whiteNoiseCtrl' + idInc, idInc++);
+
+        var bufferSize = 2 * context.sampleRate,
+            noiseBuffer = context.createBuffer(1, bufferSize, context.sampleRate),
+            output = noiseBuffer.getChannelData(0);
+        for (var i = 0; i < bufferSize; i++) {
+            output[i] = Math.random() * 2 - 1;
+        }
+
+
+
+        //whiteNoise.connect(audioContext.destination);
+
+        audioControls.push(ctrl);
+        audioControlsByLine[colNumber][rowNumber] = ctrl;
+
+        connectInLine(colNumber);
+
+        addCtrlToUI(ctrl, colNumber, function(newUICtrl){
+            $('[data-name=ui-white-start]').click(function(e){
+                ctrl.audiocontrol = context.createBufferSource();
+                ctrl.audiocontrol.buffer = noiseBuffer;
+                ctrl.audiocontrol.loop = true;
+
+                audioControlsByLine[colNumber][rowNumber] = ctrl;
+
+                connectInLine(colNumber);
+                ctrl.audiocontrol.start(0);
+            })
+
+            $('[data-name=ui-white-stop]').click(function(e){
+                ctrl.audiocontrol.stop(0);
+            })
+        });
+    }
+
     function createLowPassControl(colNumber, rowNumber) {
         var ctrl = new LowPassFilter('lpCtrl' + idInc, idInc++);
 
@@ -136,6 +179,21 @@
         ctrl.audiocontrol.type.value  = 0;
         ctrl.audiocontrol.frequency.value = 0;
         ctrl.audiocontrol.Q.value = 0;
+
+        audioControls.push(ctrl);
+        audioControlsByLine[colNumber][rowNumber] = ctrl;
+
+        connectInLine(colNumber);
+
+        addCtrlToUI(ctrl, colNumber, function(newUICtrl){
+            $('[data-name=ui-lp-cutoff-freq]', newUICtrl).bind('change', function(e){
+                ctrl.audiocontrol.frequency.value = parseInt($(this).val());
+            });
+
+            $('[data-name=ui-lp-q]', newUICtrl).bind('change', function(e){
+                ctrl.audiocontrol.Q.value = parseInt($(this).val());
+            });
+        });
     }
 
     // Create an inline volume control
@@ -152,8 +210,9 @@
 
         addCtrlToUI(ctrl, colNumber, function(newUICtrl){
             $('.horizontal-slider', newUICtrl).slider({
+                'value': 0.5,
                 'min': 0,
-                'max': 1,
+                'max': 2,
                 'step': 0.05,
                 'change': function(event) {
                     ctrl.audiocontrol.gain.value = $(this).slider("value");

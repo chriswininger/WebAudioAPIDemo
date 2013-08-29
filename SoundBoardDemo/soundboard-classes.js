@@ -134,7 +134,11 @@
     };
 
     var _LowPassFilter = function(id){
-
+        this.id = id;
+        this.displayName = 'Low Pass Control';
+        this.render = function () {
+            return renderHelper(this.uiControls, this.id);
+        };
     };
 
     _LowPassFilter.prototype = {
@@ -147,7 +151,29 @@
             },
             {
                 'name': 'ui-lp-q',
-                'html': '<label>Q (resonance in dB): </label><input type="number" min="0" max="2" step="12" data-name="{name}" data-index="{index}"  id="{id}-{name}" /></div>'
+                'html': '<label>Q (resonance in dB): </label><input type="number" min="0" max="12" step="1" data-name="{name}" data-index="{index}"  id="{id}-{name}" /></div>'
+            }]
+    };
+
+    var _WhiteNoiseControl = function(id){
+        this.id = id;
+        this.displayName = 'White Noise Control';
+        this.render = function () {
+            return renderHelper(this.uiControls, this.id);
+        };
+    };
+
+    _WhiteNoiseControl.prototype = {
+        'constructor': _WhiteNoiseControl,
+        'uiControls': [{
+            'name': 'ui-white-start',
+            'html': '<br /><div><button data-name="{name}" data-index="{index}" name="{id}-{name}">Start Tone</button>'
+
+            },
+            {
+                'name': 'ui-white-stop',
+                'html': '<button data-name="{name}" data-index="{index}" name="{id}-{name}">Stop Tone</button></div>'
+
             }]
     };
 
@@ -170,5 +196,6 @@
     this.SampleControl = _SampleControl;
     this.DelayControl = _DelayControl;
     this.LowPassFilter = _LowPassFilter;
+    this.WhiteNoiseControl = _WhiteNoiseControl;
 
 })();
