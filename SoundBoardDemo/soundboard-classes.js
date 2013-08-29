@@ -1,3 +1,14 @@
+/*
+ * soundboard-classes javascript demo
+ * Resources: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html, http://noisehack.com/generate-noise-web-audio-api/
+ *
+ * Copyright 2013 Chris Wininger
+ * Released under the MIT license
+ * https://github.com/chriswininger/jstar/blob/master/license.md
+ *
+ * Date: Sat Aug 29 2013
+ */
+
 // objectMappings will map ui elements by name to controls
 (function(){
     /* ---- Oscillator Control ---- */

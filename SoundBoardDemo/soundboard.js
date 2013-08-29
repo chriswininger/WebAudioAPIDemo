@@ -1,8 +1,14 @@
 /*
- * Author: Chris Wininger
+ * soundboard javascript demo
  * Resources: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html, http://noisehack.com/generate-noise-web-audio-api/
  *
+ * Copyright 2013 Chris Wininger
+ * Released under the MIT license
+ * https://github.com/chriswininger/jstar/blob/master/license.md
+ *
+ * Date: Sat Aug 29 2013
  */
+
 (function(){
     var context, mainVol, idInc = 0,
         sampleBuffer,
@@ -34,9 +40,20 @@
     }
 
     function initUI(){
-        $('.horizontal-slider').slider();
+        //$('.horizontal-slider').slider();
+
         $('.control-bin-item').draggable({
             helper: 'clone'
+        });
+
+        $('#main-vol-control').slider({
+            'value': 0.5,
+            'min': 0,
+            'max': 2,
+            'step': 0.05,
+            'change': function(event) {
+               mainVol.gain.value = $(this).slider("value");
+            }
         });
 
         $('.table-cell', '#web-audio-api-board-demo-board').droppable({
@@ -145,8 +162,6 @@
             output[i] = Math.random() * 2 - 1;
         }
 
-
-
         //whiteNoise.connect(audioContext.destination);
 
         audioControls.push(ctrl);
@@ -155,7 +170,7 @@
         connectInLine(colNumber);
 
         addCtrlToUI(ctrl, colNumber, function(newUICtrl){
-            $('[data-name=ui-white-start]').click(function(e){
+            $('[data-name=ui-white-start]', newUICtrl).click(function(e){
                 ctrl.audiocontrol = context.createBufferSource();
                 ctrl.audiocontrol.buffer = noiseBuffer;
                 ctrl.audiocontrol.loop = true;
@@ -166,7 +181,7 @@
                 ctrl.audiocontrol.start(0);
             })
 
-            $('[data-name=ui-white-stop]').click(function(e){
+            $('[data-name=ui-white-stop]', newUICtrl).click(function(e){
                 ctrl.audiocontrol.stop(0);
             })
         });
