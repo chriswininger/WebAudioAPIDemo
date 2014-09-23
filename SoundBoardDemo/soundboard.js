@@ -43,8 +43,16 @@
         //$('.horizontal-slider').slider();
 
         $('.control-bin-item').draggable({
-            helper: 'clone'
+            helper: 'clone',
+            'start': function(e){
+                e.stopPropagation();
+            }
         });
+
+        $('body>div').bind("dragstart", function(event, ui){
+            event.stopPropagation();
+        });
+
 
         $('#main-vol-control').slider({
             'value': 0.5,
@@ -58,7 +66,7 @@
 
         $('.table-cell', '#web-audio-api-board-demo-board').droppable({
             'drop': function(event, ui){
-                //this.css({'background-image': "url('images/sin-icon.gif')"})
+                //this.toastr({'background-image': "url('images/sin-icon.gif')"})
                 var targetElem = $(this).attr("id");
                 $(ui.draggable).clone().appendTo(this);
 
