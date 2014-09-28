@@ -24,8 +24,8 @@ var ctx,
         toastr.info('Initializing audio');
 
         try {
-            ctx = new webkitAudioContext();
-            mainVol = ctx.createGainNode();
+            ctx = new AudioContext();
+            mainVol = ctx.createGain();
             mainVol.gain.value = 0.95;
             mainVol.connect(ctx.destination);
         } catch (e) {
