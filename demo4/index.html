@@ -1,24 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html xmlns = "http://www.w3.org/1999/html">
 <head>
-    <title>Sound API Demo3</title>
-    <script src="../lib/jquery-1.9.1.js"></script>
-    <script src="../lib/toastr/toastr.min.js"></script>
-    <script src= "../lib/jquery-ui/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
-    <script src="../lib/jquery.ui.touch-punch.min.js"></script>
+	<title>Demo Basic Oscillator</title>
 
+	<link href="../lib/jquery-ui/jquery-ui-1.10.3.custom.min.css" type="text/css" rel="stylesheet">
 
-    <link href="../lib/toastr/toastr.min.css" type="text/css" rel="stylesheet"></link>
+	<script src = "../lib/jquery-1.9.1.js" type = "text/javascript"></script>
+	<script src= "../lib/jquery-ui/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
+	<script src="../lib/knockout-2.3.0.js"></script>
+
+	<script src= "../lib/jPhong.js" type="text/javascript"></script>
+	<script src = "demo4.js"></script>
+
+	<link href="../global.css" type="text/css" rel="stylesheet">
 </head>
 <body>
-    <div>
-        <a id="init" ontouchstart="javascript:activateAudioForIOS();">Click To Start On IPhone</a>
-    </div>
-    <hr />
-    <div>
-        <button id="btnPlay">Play Clip</button>
-    </div>
+<h3>Basic Oscillator Demo</h3>
+<div>
 
-    <script src="demo3.js"></script>
+	<strong></strong><label for="drpType">Wave Type: </label></strong>
+	<select id="drpType" data-bind="options: availableWaveTypes, optionsText: 'waveTypeText', value: selectedWaveType, optionsCaption: 'Choose...', event: { change: value_changed }">
+	</select>
+	<input id="txtPitch" type="number" data-bind=" event: { change: pitchChanged }, value: wavePitch" />
+</div>
+
+<div>
+	<button id="btnStart">Play Tone</button>
+	<button id="btnStop">Stop Tone</button>
+</div>
 </body>
 </html>

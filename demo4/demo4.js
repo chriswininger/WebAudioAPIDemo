@@ -1,77 +1,98 @@
-var ctx,
-    buf,
-    mainVol;
-
 (function(){
 
+	$(function(){
+		var context = new AudioContext(),
+			mainVol = context.createGain();
+		mainVol.gain.value = 0.5;
+		mainVol.connect(context.destination);
+
+		var bufferSize = 4096;
+		var pinkNoise = (function() {
+			var b0, b1, b2, b3, b4, b5, b6;
+			b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+			var node = context.createScriptProcessor(bufferSize, 1, 1);
+			node.onaudioprocess = function(e) {
+				var output = e.outputBuffer.getChannelData(0);
+				for (var i = 0; i < bufferSize; i++) {
+					var white = Math.random() * 2 - 1;
+					b0 = 0.99886 * b0 + white * 0.0555179;
+					b1 = 0.99332 * b1 + white * 0.0750759;
+					b2 = 0.96900 * b2 + white * 0.1538520;
+					b3 = 0.86650 * b3 + white * 0.3104856;
+					b4 = 0.55000 * b4 + white * 0.5329522;
+					b5 = -0.7616 * b5 - white * 0.0168980;
+					output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+					output[i] *= 0.11; // (roughly) compensate for gain
+					b6 = white * 0.115926;
+				}
+			}
+			return node;
+		})();
+
+		var filter = context.createBiquadFilter();
+		filter.connect(mainVol);
+		filter.type = 0; // Low-pass filter. See BiquadFilterNode docs
+
+		$('#btnStart').click(function(event){
+			// start the sound
+			pinkNoise.connect(filter);
+			runLPLoop = true;
+			runVolLoop = true;
+		});
+
+		$('#btnStop').click(function(event){
+			pinkNoise.disconnect(mainVol);
+			runLPLoop = false;
+			runVolLoop = false;
+		});
 
 
-    $(function(){
-        initAudio();
+		var interval = 10;
+		var floor = 30;
+		var ceiling = 2000;
+		var intervalSpeed = 600;
+		var runLPLoop = false;
+		var waveMinSpeed = 100,
+			waveMaxSpeed = 200;
+		filter.frequency.value = floor;
+		var cnt = 0;
+		function _lpLoop () {
+			if (runLPLoop) {
+				var inc = Math.floor((Math.random() * interval) + 1);
 
-        $('#btnPlay').click(function(){
-            try {
-                toastr.info('loading file');
-                loadFile();
-            } catch (ex){
-                toastr.error('Load File Error: ' + ex.message);
-            }
-        });
-    });
+				filter.frequency.value += inc; // Set cutoff to 440 HZ
 
-    function initAudio() {
-        console.log("in init");
-        toastr.info('Initializing audio');
+				cnt++;
+				if (filter.frequency.value > ceiling || filter.frequency.value < floor) {
+					interval = -1*interval;
+					if (interval > 0) cnt = 0;
 
-        try {
-            ctx = new webkitAudioContext();
-            mainVol = ctx.createGainNode();
-            mainVol.gain.value = 0.95;
-            mainVol.connect(ctx.destination);
-        } catch (e) {
-            console.log('you need webaudio support');
-            toastr.error('You need WebAduio support');
-        }
-    }
+					intervalSpeed = 600;
+					if (cnt > 500) intervalSpeed = 100;
+					waveMaxSpeed = Math.random() * (intervalSpeed - 50) + 50;
+					waveMaxSpeed = waveMaxSpeed - (Math.random() *100 + 1);
+				}
+			}
 
-    function loadFile() {
-        var req = new XMLHttpRequest();
-        req.open("GET", "BumpinTheTeaParty.mp3", true);
-        req.responseType = 'arraybuffer';
-        req.onload = function() {
 
-            ctx.decodeAudioData(req.response, function(buffer){
-                toastr.info('decode audio: ' + buffer.length + ', ' + buffer.duration);
-                buf = buffer;
-                play();
-            });
-        };
-        req.send();
-    }
+			setTimeout(_lpLoop, Math.floor((Math.random() * (waveMaxSpeed - waveMinSpeed)) + waveMinSpeed));
+		}
+		_lpLoop();
 
-    function play(){
-        toastr.info('Play it');
-        var src = ctx.createBufferSource();
-        src.buffer = buf;
-        src.playbackRate = 1.0;
-        src.connect(mainVol);
-        src.start(0);
-        toastr.info('Complete!!!');
-    }
+		var runVolLoop = false;
+		function _volLoop () {
+			if (runVolLoop) {
+				var coin = Math.random();
+				if (coin > 0.5) {
+					mainVol.gain.value += 0.1
+				} else {
+					mainVol.gain.value -= 0.1
+				}
+				setTimeout(_volLoop, 20);
+			}
+		}
+
+	});
+
+
 })();
-
-function activateAudioForIOS() {
-    toastr.info('!!!!activating IPHONE SOUND!!!!');
-    // create empty buffer
-    var buffer = ctx.createBuffer(1, 1, 22050);
-    var source = ctx.createBufferSource();
-    source.buffer = buffer;
-
-    // connect to output (your speakers)
-    source.connect(ctx.destination);
-
-    // play the file
-    source.noteOn(0);
-
-    toastr.info('active');
-}
