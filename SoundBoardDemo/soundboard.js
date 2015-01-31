@@ -33,7 +33,7 @@
 
     function initSound() {
         context = new webkitAudioContext(),
-            mainVol = context.createGainNode();
+            mainVol = context.createGain();
 
         mainVol.connect(context.destination);
         mainVol.gain.value = 0.5;
@@ -223,7 +223,7 @@
     function createInLineVolume(colNumber, rowNumber){
         var ctrl = new InLineVolumeControl('inlineVol' + idInc, idInc++);
 
-        ctrl.audiocontrol = context.createGainNode();
+        ctrl.audiocontrol = context.createGain();
         ctrl.audiocontrol.gain.value = 0.5;
 
         audioControls.push(ctrl);
